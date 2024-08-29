@@ -7,7 +7,8 @@ import { AllExceptionFilter } from './common/exceptions/base.exception.filter';
 import { TransformInterceptor } from './common/interceptors/transform/transform.interceptor';
 import { DatabaseModule } from './shared/database/database.module';
 import { UserModule } from './modules/user/user.module';
-import { DatabaseConfig } from './config/database.config';
+import { RedisModule } from './shared/redis/redis.module';
+import { DatabaseConfig, RedisConfig } from './config';
 
 @Module({
   imports: [
@@ -15,11 +16,12 @@ import { DatabaseConfig } from './config/database.config';
       isGlobal: true,
       expandVariables: true,
       // 指定多个 env 文件时，第一个优先级最高
-      envFilePath: ['.env.development', `.env.${process.env.NODE_ENV}`, '.env'],
-      load: [DatabaseConfig],
+      envFilePath: [`.env.${process.env.NODE_ENV}`, '.env'],
+      load: [DatabaseConfig, RedisConfig],
     }),
     DatabaseModule,
     UserModule,
+    RedisModule,
   ],
   controllers: [AppController],
   providers: [
