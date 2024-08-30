@@ -1,5 +1,5 @@
 import { getEnvNumber, getEnvString } from '@/utils';
-import { registerAs } from '@nestjs/config';
+import { ConfigType, registerAs } from '@nestjs/config';
 
 export const appRegToken = 'app';
 
@@ -8,3 +8,5 @@ export const AppConfig = registerAs(appRegToken, () => ({
   port: getEnvNumber('APP_PORT'),
   globalPrefix: getEnvString('APP_GLOBAL_PREFIX'),
 }));
+
+export type IAppConfig = ConfigType<typeof AppConfig>;

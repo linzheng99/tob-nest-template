@@ -1,5 +1,5 @@
 import { getEnvBoolean, getEnvString } from '@/utils';
-import { registerAs } from '@nestjs/config';
+import { ConfigType, registerAs } from '@nestjs/config';
 
 export const swaggerRegToken = 'swagger';
 
@@ -8,3 +8,5 @@ export const SwaggerConfig = registerAs(swaggerRegToken, () => ({
   path: getEnvString('SWAGGER_PATH'),
   version: getEnvString('SWAGGER_VERSION'),
 }));
+
+export type ISwaggerConfig = ConfigType<typeof SwaggerConfig>;

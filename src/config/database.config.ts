@@ -1,6 +1,6 @@
 import { config } from 'dotenv';
 import { DataSourceOptions } from 'typeorm';
-import { registerAs } from '@nestjs/config';
+import { ConfigType, registerAs } from '@nestjs/config';
 import { getEnvBoolean, getEnvNumber, getEnvString } from '@/utils';
 
 config({ path: `.env.${process.env.NODE_ENV}` });
@@ -23,3 +23,5 @@ export const DatabaseConfig = registerAs(
   dbRegToken,
   (): DataSourceOptions => dataSourceOptions,
 );
+
+export type IDatabaseConfig = ConfigType<typeof DatabaseConfig>;
