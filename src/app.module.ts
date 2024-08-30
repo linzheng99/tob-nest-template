@@ -9,6 +9,8 @@ import { DatabaseModule } from './shared/database/database.module';
 import { UserModule } from './modules/user/user.module';
 import { RedisModule } from './shared/redis/redis.module';
 import { DatabaseConfig, RedisConfig } from './config';
+import { AppConfig } from './config/app.config';
+import { SwaggerConfig } from './config/swagger.config';
 
 @Module({
   imports: [
@@ -17,7 +19,7 @@ import { DatabaseConfig, RedisConfig } from './config';
       expandVariables: true,
       // 指定多个 env 文件时，第一个优先级最高
       envFilePath: [`.env.${process.env.NODE_ENV}`, '.env'],
-      load: [DatabaseConfig, RedisConfig],
+      load: [AppConfig, SwaggerConfig, DatabaseConfig, RedisConfig],
     }),
     DatabaseModule,
     UserModule,
