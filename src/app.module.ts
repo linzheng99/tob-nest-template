@@ -11,7 +11,7 @@ import { RedisModule } from './shared/redis/redis.module';
 import { DatabaseConfig, RedisConfig } from './config';
 import { AppConfig } from './config/app.config';
 import { SwaggerConfig } from './config/swagger.config';
-import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { JwtAuthGuard } from './modules/auth/guards/jwt-auth.guard';
 import { AuthModule } from './modules/auth/auth.module';
 import { JwtConfig } from './config/jwt.config';
 

@@ -23,11 +23,14 @@ export class AllExceptionFilter implements ExceptionFilter {
 
   catch(exception: unknown, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
-    const errorCode = this.getStatus(exception);
     const response = ctx.getResponse();
     const request = ctx.getRequest();
     const url = request.url!;
     const status = this.getStatus(exception);
+    const errorCode =
+      exception instanceof BusinessException
+        ? exception.getErrorCode()
+        : status;
 
     let message = this.getErrorMessage(exception);
 
