@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import type { IAppConfig, ISwaggerConfig } from './config';
 import { CommonEntity } from './common/entity/common.entity';
+import { ResOp } from './common/model/response.model';
 
 export function setupSwagger(
   app: INestApplication,
@@ -26,7 +27,7 @@ export function setupSwagger(
 
   const document = SwaggerModule.createDocument(app, options, {
     ignoreGlobalPrefix: false,
-    extraModels: [CommonEntity],
+    extraModels: [CommonEntity, ResOp],
   });
 
   SwaggerModule.setup(path, app, document);

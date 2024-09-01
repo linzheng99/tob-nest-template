@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { User } from './entities/user.entity';
+import { UserEntity } from './entities/user.entity';
 import { md5 } from '@/utils';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -14,8 +14,8 @@ import { genAuthTokenKey, genTokenBlacklistKey } from '@/utils/redis';
 @Injectable()
 export class UserService {
   constructor(
-    @InjectRepository(User)
-    private userRepository: Repository<User>,
+    @InjectRepository(UserEntity)
+    private userRepository: Repository<UserEntity>,
     @Inject(JwtConfig.KEY)
     private jwtConfig: IJWtConfig,
     private redisService: RedisService,
@@ -28,7 +28,7 @@ export class UserService {
 
     if (exists) throw new BusinessException(ErrorEnum.SYSTEM_USER_EXISTS);
 
-    const user = new User();
+    const user = new UserEntity();
     user.username = dto.username;
     user.password = md5(dto.password);
     user.nickName = dto.nickName;
@@ -42,9 +42,6 @@ export class UserService {
     const exp = user.exp
       ? +(user.exp - Date.now() / 1000).toFixed(0)
       : this.jwtConfig.jwtExpires;
-
-    const token = await this.redisService.get(genAuthTokenKey(user.userId));
-    console.log(token);
 
     await this.redisService.set(
       genTokenBlacklistKey(accessToken),
@@ -62,8 +59,6 @@ export class UserService {
   }
 
   async findUserByUserName(username: string) {
-    console.log(username);
-
     return await this.userRepository.findOne({
       where: {
         username,

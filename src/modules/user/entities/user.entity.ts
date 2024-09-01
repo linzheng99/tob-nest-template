@@ -1,11 +1,13 @@
 import { Column, Entity, JoinTable, ManyToMany } from 'typeorm';
 import { Role } from './role.entity';
 import { CommonEntity } from '@/common/entity/common.entity';
+import { ApiProperty } from '@nestjs/swagger';
 
 @Entity({
   name: 'users',
 })
-export class User extends CommonEntity {
+export class UserEntity extends CommonEntity {
+  @ApiProperty({ description: '用户名' })
   @Column({
     length: 50,
     comment: '用户名',
@@ -13,12 +15,14 @@ export class User extends CommonEntity {
   })
   username: string;
 
+  @ApiProperty({ description: '密码' })
   @Column({
     length: 50,
     comment: '密码',
   })
   password: string;
 
+  @ApiProperty({ description: '昵称' })
   @Column({
     name: 'nick_name',
     length: 50,
@@ -26,18 +30,21 @@ export class User extends CommonEntity {
   })
   nickName: string;
 
+  @ApiProperty({ description: '邮箱' })
   @Column({
     comment: '邮箱',
     length: 50,
   })
   email: string;
 
+  @ApiProperty({ description: '是否冻结' })
   @Column({
     comment: '是否冻结',
     default: false,
   })
   isFrozen: boolean;
 
+  @ApiProperty({ description: '角色' })
   @ManyToMany(() => Role)
   @JoinTable({
     name: 'user_roles',

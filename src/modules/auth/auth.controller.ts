@@ -5,6 +5,8 @@ import { LoginUserDto } from '../user/dto/login-user.dto';
 import { RegisterUserDto } from '../user/dto/register-user.dto';
 import { UserService } from '../user/user.service';
 import { AuthPublic } from '@/common/decorators/public.decorator';
+import { LoginUserModel } from './models/auth.model';
+import { ApiResult } from '@/common/decorators/api-result.decorator';
 
 @ApiTags('Auth - 认证模块')
 @AuthPublic()
@@ -17,8 +19,8 @@ export class AuthController {
 
   @Post('login')
   @ApiOperation({ summary: '登录' })
-  async userLogin(@Body() dto: LoginUserDto) {
-    console.log(dto);
+  @ApiResult({ type: LoginUserModel })
+  async userLogin(@Body() dto: LoginUserDto): Promise<LoginUserModel> {
     const response = await this.authService.login(dto);
     return response;
   }

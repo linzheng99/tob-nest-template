@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { LoginUserDto } from '../user/dto/login-user.dto';
 import { md5 } from '@/utils';
-import { User } from '../user/entities/user.entity';
+import { UserEntity } from '../user/entities/user.entity';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { IJWtConfig } from '@/config';
@@ -51,7 +51,7 @@ export class AuthService {
     };
   }
 
-  generateToken(user: User): Token {
+  generateToken(user: UserEntity): Token {
     const { jwtExpires, refreshExpire } =
       this.configService.get<IJWtConfig>('jwt');
 
