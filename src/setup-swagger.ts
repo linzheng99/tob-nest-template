@@ -4,6 +4,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import type { IAppConfig, ISwaggerConfig } from './config';
 import { CommonEntity } from './common/entity/common.entity';
 import { ResOp } from './common/model/response.model';
+import { API_SECURITY_AUTH } from './common/decorators/swagger.decorator';
 
 export function setupSwagger(
   app: INestApplication,
@@ -22,6 +23,12 @@ export function setupSwagger(
     .addBearerAuth({
       description: '输入令牌（Enter the token）',
       type: 'http',
+    })
+    .addSecurity(API_SECURITY_AUTH, {
+      description: '输入令牌（Enter the token）',
+      type: 'http',
+      scheme: 'bearer',
+      bearerFormat: 'JWT',
     })
     .build();
 

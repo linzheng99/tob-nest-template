@@ -30,6 +30,9 @@ async function bootstrap() {
     }),
   );
 
+  // 启动跨域
+  app.enableCors();
+
   await app.listen(port);
 }
 bootstrap();

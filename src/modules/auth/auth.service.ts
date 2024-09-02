@@ -30,6 +30,7 @@ export class AuthService {
     const user = await this.userService.findUserByUserName(
       loginUserDto.username,
     );
+
     if (!user) throw new BusinessException(ErrorEnum.SYSTEM_USER_EXISTS);
     if (user.password !== md5(loginUserDto.password))
       throw new BusinessException(ErrorEnum.INVALID_USERNAME_PASSWORD);

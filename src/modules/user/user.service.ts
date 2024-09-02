@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { UserEntity } from './entities/user.entity';
 import { md5 } from '@/utils';
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { RegisterUserDto } from './dto/register-user.dto';
 import { BusinessException } from '@/common/exceptions/business.exception';
@@ -10,6 +10,8 @@ import { JwtUserData } from '../auth/guards/jwt-auth.guard';
 import { IJWtConfig, JwtConfig } from '@/config';
 import { RedisService } from '@/shared/redis/redis.service';
 import { genAuthTokenKey, genTokenBlacklistKey } from '@/utils/redis';
+import { UserQueryDto } from './dto/user.dto';
+import { paginate, Pagination } from '@/helper/pagination';
 
 @Injectable()
 export class UserService {
@@ -31,7 +33,7 @@ export class UserService {
     const user = new UserEntity();
     user.username = dto.username;
     user.password = md5(dto.password);
-    user.nickName = dto.nickName;
+    user.nickName = dto.nickName || '';
     user.email = dto.email;
 
     this.userRepository.save(user);
@@ -64,6 +66,25 @@ export class UserService {
         username,
       },
       relations: ['roles', 'roles.permissions'],
+    });
+  }
+
+  async list({
+    page,
+    pageSize,
+    username,
+    nickName,
+    email,
+  }: UserQueryDto): Promise<Pagination<UserEntity>> {
+    const queryBuilder = this.userRepository.createQueryBuilder('user').where({
+      ...(username ? { username: Like(`%${username}%`) } : null),
+      ...(nickName ? { nickName: Like(`%${nickName}%`) } : null),
+      ...(email ? { email: Like(`%${email}%`) } : null),
+    });
+
+    return paginate<UserEntity>(queryBuilder, {
+      page,
+      pageSize,
     });
   }
 }

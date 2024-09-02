@@ -1,5 +1,5 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsNotEmpty, MinLength } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { IsEmail, IsNotEmpty, IsString, MinLength } from 'class-validator';
 
 export class RegisterUserDto {
   @ApiProperty({ description: '用户名' })
@@ -8,11 +8,10 @@ export class RegisterUserDto {
   })
   username: string;
 
-  @ApiProperty({ description: '用户昵称' })
-  @IsNotEmpty({
-    message: '昵称不能为空',
-  })
-  nickName: string;
+  @ApiProperty({ description: '用户昵称', example: '管理员' })
+  @ApiPropertyOptional()
+  @IsString()
+  nickName?: string;
 
   @ApiProperty({ description: '用户密码' })
   @IsNotEmpty({

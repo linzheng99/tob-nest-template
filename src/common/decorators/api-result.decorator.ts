@@ -45,9 +45,14 @@ export function ApiResult<TModal extends Type<any>>({
       prop = {
         type: 'object',
         properties: {
+          // 数据
           items,
+          // 总数
           totalItems: { type: 'number', default: 0 },
+          // 总页数
           totalPages: { type: 'number', default: 0 },
+          // 当前页
+          currentPage: { type: 'number', default: 0 },
         },
       };
     } else {
