@@ -14,6 +14,7 @@ import { SwaggerConfig } from './config/swagger.config';
 import { JwtAuthGuard } from './modules/auth/guards/jwt-auth.guard';
 import { AuthModule } from './modules/auth/auth.module';
 import { JwtConfig } from './config/jwt.config';
+import { MenuModule } from './modules/menu/menu.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { JwtConfig } from './config/jwt.config';
     UserModule,
     RedisModule,
     AuthModule,
+    MenuModule,
   ],
   controllers: [AppController],
   providers: [
