@@ -68,12 +68,13 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     try {
       // 是否允许请求
       result = await super.canActivate(context);
-      // request.user = {
-      //   userId: user.userId,
-      //   username: user.username,
-      //   email: user.email,
-      //   roles: user.roles,
-      // };
+
+      request.user = {
+        userId: user.userId,
+        username: user.username,
+        email: user.email,
+        roles: user.roles,
+      };
     } catch (err) {
       if (err instanceof UnauthorizedException)
         throw new BusinessException(ErrorEnum.INVALID_LOGIN);
