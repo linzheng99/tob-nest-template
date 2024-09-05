@@ -13,7 +13,7 @@ export class MenuService {
     private readonly menuRepository: Repository<MenuEntity>,
   ) {}
 
-  async list() {
+  async list(): Promise<MenuEntity[]> {
     const menus = await this.menuRepository.find();
     return buildMenuTree(menus);
   }

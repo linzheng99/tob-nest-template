@@ -38,7 +38,6 @@ export function ApiResult<TModal extends Type<any>>({
     const items = {
       type: 'array',
       items: { $ref: getSchemaPath(type[0]) },
-      default: [],
     };
     if (isPage) {
       // 如果需要分页，定义分页的属性
