@@ -35,10 +35,16 @@ export class MenuController {
     return this.menuService.list();
   }
 
+  @Get(':id')
+  @ApiOperation({ summary: '菜单信息' })
+  @ApiResult({ type: MenuItemInfo })
+  menuInfo(@Param('id') id: string) {
+    return this.menuService.getMenuInfo(+id);
+  }
+
   @Put(':id')
   @ApiOperation({ summary: '更新菜单' })
   update(@Param('id') id: string, @Body(UpdaterPipe) dto: MenuUpdateDto) {
-    console.log('id', id);
     return this.menuService.update(+id, dto);
   }
 
