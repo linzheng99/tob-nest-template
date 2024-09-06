@@ -5,6 +5,8 @@ import {
   Get,
   UseGuards,
   Query,
+  Put,
+  Body,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
@@ -16,6 +18,7 @@ import { ApiSecurityAuth } from '@/common/decorators/swagger.decorator';
 import { ApiResult } from '@/common/decorators/api-result.decorator';
 import { UserEntity } from './entities/user.entity';
 import { UserQueryDto } from './dto/user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @ApiTags('User - 用户模块')
 @ApiSecurityAuth()
@@ -41,6 +44,19 @@ export class UserController {
   @ApiResult({ type: [UserEntity], isPage: true })
   async userList(@Query() dto: UserQueryDto) {
     return await this.userService.list(dto);
+  }
+
+  @Get(':id')
+  @ApiOperation({ summary: '用户详情' })
+  @ApiResult({ type: UserEntity })
+  async userDetail(@Param('id') id: number) {
+    return await this.userService.getUserInfo(+id);
+  }
+
+  @Put(':id')
+  @ApiOperation({ summary: '更新用户' })
+  async updateUser(@Param('id') id: number, @Body() dto: UpdateUserDto) {
+    await this.userService.updateUser(+id, dto);
   }
 
   @Delete(':id')

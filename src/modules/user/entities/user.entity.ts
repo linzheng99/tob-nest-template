@@ -2,6 +2,7 @@ import { Column, Entity, JoinTable, ManyToMany } from 'typeorm';
 import { Role } from './role.entity';
 import { CommonEntity } from '@/common/entity/common.entity';
 import { ApiProperty } from '@nestjs/swagger';
+import { Exclude } from 'class-transformer';
 
 @Entity({
   name: 'users',
@@ -15,11 +16,8 @@ export class UserEntity extends CommonEntity {
   })
   username: string;
 
-  @ApiProperty({ description: '密码' })
-  @Column({
-    length: 50,
-    comment: '密码',
-  })
+  @Exclude()
+  @Column()
   password: string;
 
   @ApiProperty({ description: '昵称' })

@@ -5,6 +5,7 @@ export enum ErrorEnum {
   SYSTEM_USER_EXISTS = '1001:系统用户已存在',
   INVALID_VERIFICATION_CODE = '1002:验证码填写有误',
   INVALID_USERNAME_PASSWORD = '1003:用户名密码有误',
+  USER_NOT_FOUND = '1004:用户不存在',
 
   INVALID_LOGIN = '1101:登录无效，请重新登录',
 }

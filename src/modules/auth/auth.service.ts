@@ -31,7 +31,7 @@ export class AuthService {
       loginUserDto.username,
     );
 
-    if (!user) throw new BusinessException(ErrorEnum.SYSTEM_USER_EXISTS);
+    if (!user) throw new BusinessException(ErrorEnum.USER_NOT_FOUND);
     if (user.password !== md5(loginUserDto.password))
       throw new BusinessException(ErrorEnum.INVALID_USERNAME_PASSWORD);
 
