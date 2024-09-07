@@ -1,6 +1,7 @@
 import { CompleteEntity } from '@/common/entity/common.entity';
+import { RoleEntity } from '@/modules/role/entities/role.entity';
 import { ApiProperty } from '@nestjs/swagger';
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, ManyToMany, Relation } from 'typeorm';
 
 @Entity({ name: 'menu' })
 export class MenuEntity extends CompleteEntity {
@@ -30,4 +31,9 @@ export class MenuEntity extends CompleteEntity {
   @ApiProperty({ description: '前端路由重定向' })
   @Column({ nullable: true })
   redirect?: string;
+
+  @ManyToMany(() => RoleEntity, (role) => role.menus, {
+    onDelete: 'CASCADE',
+  })
+  roles: Relation<RoleEntity[]>;
 }

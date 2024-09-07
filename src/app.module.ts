@@ -15,6 +15,7 @@ import { JwtAuthGuard } from './modules/auth/guards/jwt-auth.guard';
 import { AuthModule } from './modules/auth/auth.module';
 import { JwtConfig } from './config/jwt.config';
 import { MenuModule } from './modules/menu/menu.module';
+import { RoleModule } from './modules/role/role.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { MenuModule } from './modules/menu/menu.module';
     RedisModule,
     AuthModule,
     MenuModule,
+    RoleModule,
   ],
   controllers: [AppController],
   providers: [

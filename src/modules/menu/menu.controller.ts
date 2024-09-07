@@ -14,7 +14,7 @@ import { MenuDto, MenuUpdateDto } from './dto/menu.dto';
 import { CreatorPipe } from '@/common/pipes/creator.pipe';
 import { UpdaterPipe } from '@/common/pipes/updater.pipe';
 import { ApiResult } from '@/common/decorators/api-result.decorator';
-import { MenuItemInfo } from './menu.model';
+import { MenuItemInfo } from './models/menu.model';
 
 @ApiTags('Menu - 菜单管理')
 @ApiSecurityAuth()
