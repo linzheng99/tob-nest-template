@@ -62,24 +62,18 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 
     let result: any = false;
 
-    // 校验 token 有效期
-    const user = this.jwtService.verify<JwtUserData>(token);
-
     try {
-      // 是否允许请求
       result = await super.canActivate(context);
-
-      request.user = {
-        userId: user.userId,
-        username: user.username,
-        email: user.email,
-        roles: user.roles,
-      };
     } catch (err) {
+      // 判断 token 是否有效且存在, 如果不存在则认证失败
+      const isValid = !!token
+        ? undefined
+        : this.jwtService.verify<JwtUserData>(token);
+
       if (err instanceof UnauthorizedException)
         throw new BusinessException(ErrorEnum.INVALID_LOGIN);
 
-      if (!Boolean(user)) throw new BusinessException(ErrorEnum.INVALID_LOGIN);
+      if (!isValid) throw new BusinessException(ErrorEnum.INVALID_LOGIN);
     }
 
     return result;
