@@ -34,7 +34,7 @@ export class RoleService {
     name,
   }: RoleQueryDto): Promise<Pagination<RoleEntity>> {
     const queryBuilder = this.roleRepository.createQueryBuilder().where({
-      ...(name ? { username: Like(`%${name}%`) } : null),
+      ...(name ? { name: Like(`%${name}%`) } : null),
     });
 
     return paginate<RoleEntity>(queryBuilder, {
