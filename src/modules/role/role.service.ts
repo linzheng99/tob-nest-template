@@ -1,19 +1,31 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { RoleDto, RoleQueryDto, UpdateRoleDto } from './dto/role.dto';
 import { paginate, Pagination } from '@/helper/pagination';
-import { InjectRepository } from '@nestjs/typeorm';
+import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
 import { RoleEntity } from './entities/role.entity';
-import { Like, Repository } from 'typeorm';
+import { EntityManager, In, Like, Repository } from 'typeorm';
+import { MenuEntity } from '../menu/entities/menu.entity';
 
 @Injectable()
 export class RoleService {
   constructor(
     @InjectRepository(RoleEntity)
     private roleRepository: Repository<RoleEntity>,
+    @InjectRepository(MenuEntity)
+    private menuRepository: Repository<MenuEntity>,
+    @InjectEntityManager()
+    private entityManager: EntityManager,
   ) {}
 
-  async create(role: RoleDto) {
-    return await this.roleRepository.save(role);
+  async create({ menuIds, ...data }: RoleDto): Promise<{ roleId: number }> {
+    const role = await this.roleRepository.save({
+      ...data,
+      menus: menuIds
+        ? await this.menuRepository.findBy({ id: In(menuIds) })
+        : [],
+    });
+
+    return { roleId: role.id };
   }
 
   list({
@@ -31,17 +43,40 @@ export class RoleService {
     });
   }
 
-  getInfo(id: number) {
-    return `This action returns a #${id} role`;
+  async getInfo(id: number) {
+    const info = await this.roleRepository.findOneBy({ id });
+
+    if (!info) {
+      throw new NotFoundException('未找到指定 ID 角色');
+    }
+
+    const menus = await this.menuRepository.find({
+      where: { roles: { id } },
+      select: ['id'],
+    });
+
+    return { ...info, menuIds: menus.map((m) => m.id) };
   }
 
-  async update(id: number, dto: UpdateRoleDto) {
-    const existingUser = await this.roleRepository.findOneBy({ id });
-    if (!existingUser) {
-      throw new NotFoundException('未找到指定 ID 的角色');
+  /**
+   * 更新角色信息
+   * 如果传入的menuIds为空，则清空sys_role_menus表中存有的关联数据，参考新增
+   */
+  async update(id: number, { menuIds, ...data }: UpdateRoleDto): Promise<void> {
+    const role = await this.roleRepository.findOne({ where: { id } });
+
+    if (!role) {
+      throw new NotFoundException('未找到指定 ID 角色');
     }
-    const user = await this.roleRepository.update(id, dto);
-    return user;
+
+    await this.roleRepository.update(id, data);
+
+    await this.entityManager.transaction(async (manager) => {
+      role.menus = menuIds?.length
+        ? await this.menuRepository.findBy({ id: In(menuIds) })
+        : [];
+      await manager.save(role);
+    });
   }
 
   async delete(id: number) {

@@ -3,10 +3,10 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
   Query,
+  Put,
 } from '@nestjs/common';
 import { RoleService } from './role.service';
 import { RoleDto, RoleQueryDto, UpdateRoleDto } from './dto/role.dto';
@@ -37,7 +37,7 @@ export class RoleController {
     return this.roleService.getInfo(+id);
   }
 
-  @Patch(':id')
+  @Put(':id')
   @ApiOperation({ summary: '更新角色信息' })
   update(@Param('id') id: string, @Body() updateRoleDto: UpdateRoleDto) {
     return this.roleService.update(+id, updateRoleDto);

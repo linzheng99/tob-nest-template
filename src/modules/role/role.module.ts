@@ -12,5 +12,6 @@ import { MenuModule } from '../menu/menu.module';
   ],
   controllers: [RoleController],
   providers: [RoleService],
+  exports: [TypeOrmModule, RoleService],
 })
 export class RoleModule {}

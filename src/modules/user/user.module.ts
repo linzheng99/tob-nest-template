@@ -15,6 +15,6 @@ import { MenuModule } from '../menu/menu.module';
   ],
   controllers: [UserController],
   providers: [UserService],
-  exports: [UserService],
+  exports: [TypeOrmModule, UserService],
 })
 export class UserModule {}
