@@ -1,8 +1,8 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { UserEntity } from './entities/user.entity';
 import { md5 } from '@/utils';
-import { Like, Repository } from 'typeorm';
-import { InjectRepository } from '@nestjs/typeorm';
+import { EntityManager, In, Like, Repository } from 'typeorm';
+import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
 import { RegisterUserDto } from './dto/register-user.dto';
 import { BusinessException } from '@/common/exceptions/business.exception';
 import { ErrorEnum } from '@/constants/error-code.constant';
@@ -10,35 +10,68 @@ import { JwtUserData } from '../auth/guards/jwt-auth.guard';
 import { IJWtConfig, JwtConfig } from '@/config';
 import { RedisService } from '@/shared/redis/redis.service';
 import { genAuthTokenKey, genTokenBlacklistKey } from '@/utils/redis';
-import { UserQueryDto } from './dto/user.dto';
+import { UserDto, UserQueryDto } from './dto/user.dto';
 import { paginate, Pagination } from '@/helper/pagination';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { RoleEntity } from '../role/entities/role.entity';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(UserEntity)
     private userRepository: Repository<UserEntity>,
+    @InjectRepository(RoleEntity)
+    private roleRepository: Repository<RoleEntity>,
+    @InjectEntityManager() private entityManager: EntityManager,
     @Inject(JwtConfig.KEY)
     private jwtConfig: IJWtConfig,
     private redisService: RedisService,
   ) {}
 
-  async register(dto: RegisterUserDto) {
-    const exists = await this.userRepository.findOneBy({
-      username: dto.username,
+  async userExists(username: string): Promise<boolean> {
+    const exists = await this.userRepository.findOneBy({ username });
+    return !!exists;
+  }
+
+  async register({ username, ...data }: RegisterUserDto): Promise<void> {
+    if (await this.userExists(username)) {
+      throw new BusinessException(ErrorEnum.SYSTEM_USER_EXISTS);
+    }
+
+    await this.entityManager.transaction(async (manager) => {
+      const u = manager.create(UserEntity, {
+        username,
+        password: md5(data.password),
+        ...data,
+      });
+
+      const user = await manager.save(u);
+
+      return user;
     });
+  }
 
-    if (exists) throw new BusinessException(ErrorEnum.SYSTEM_USER_EXISTS);
+  async create({
+    username,
+    password,
+    roleIds,
+    ...data
+  }: UserDto): Promise<void> {
+    if (await this.userExists(username)) {
+      throw new BusinessException(ErrorEnum.SYSTEM_USER_EXISTS);
+    }
 
-    const user = new UserEntity();
-    user.username = dto.username;
-    user.password = md5(dto.password);
-    user.nickName = dto.nickName || '';
-    user.email = dto.email;
+    await this.entityManager.transaction(async (manager) => {
+      const u = manager.create(UserEntity, {
+        username,
+        password: md5(password),
+        ...data,
+        roles: await this.roleRepository.findBy({ id: In(roleIds) }),
+      });
 
-    this.userRepository.save(user);
-    return 'success';
+      const result = await manager.save(u);
+      return result;
+    });
   }
 
   async logout(user: JwtUserData, accessToken: string) {
@@ -101,19 +134,46 @@ export class UserService {
   }
 
   async getUserInfo(id: number) {
-    const user = await this.userRepository.findOneBy({ id });
+    const user = await this.userRepository
+      .createQueryBuilder('user')
+      .leftJoinAndSelect('user.roles', 'roles')
+      .where('user.id = :id', { id })
+      .getOne();
+
     if (user) {
       delete user.password;
     }
-    return user;
+
+    return {
+      ...user,
+      roleIds: user.roles?.map((r) => r.id),
+    };
   }
 
-  async updateUser(id: number, dto: UpdateUserDto) {
+  async updateUser(id: number, { roleIds, ...data }: UpdateUserDto) {
     const existingUser = await this.userRepository.findOneBy({ id });
     if (!existingUser) {
       throw new NotFoundException('未找到指定 ID 的用户');
     }
-    const user = await this.userRepository.update(id, dto);
-    return user;
+
+    await this.entityManager.transaction(async (manager) => {
+      await manager.update(UserEntity, id, {
+        ...data,
+      });
+
+      const user = await this.userRepository
+        .createQueryBuilder('user')
+        .leftJoinAndSelect('user.roles', 'roles')
+        .where('user.id = :id', { id })
+        .getOne();
+
+      if (roleIds) {
+        await manager
+          .createQueryBuilder()
+          .relation(UserEntity, 'roles')
+          .of(id)
+          .addAndRemove(roleIds, user.roles);
+      }
+    });
   }
 }

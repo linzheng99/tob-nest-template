@@ -5,12 +5,14 @@ import { MenuEntity } from './entities/menu.entity';
 import { Repository } from 'typeorm';
 import { NotFoundException } from '@nestjs/common';
 import { buildMenuTree } from '@/helper/menu';
+import { RoleService } from '../role/role.service';
 
 @Injectable()
 export class MenuService {
   constructor(
     @InjectRepository(MenuEntity)
     private readonly menuRepository: Repository<MenuEntity>,
+    private roleService: RoleService,
   ) {}
 
   async getMenuInfo(id: number) {
@@ -20,6 +22,21 @@ export class MenuService {
 
   async list(): Promise<MenuEntity[]> {
     const menus = await this.menuRepository.find();
+    return buildMenuTree(menus);
+  }
+
+  async getMenus(id: number) {
+    const roleIds = await this.roleService.getRoleIdsByUser(id);
+    if (!roleIds.length) {
+      return [];
+    }
+    let menus: MenuEntity[] = [];
+    menus = await this.menuRepository
+      .createQueryBuilder('menu')
+      .innerJoinAndSelect('menu.roles', 'role')
+      .andWhere('role.id IN (:...roleIds)', { roleIds })
+      .getMany();
+
     return buildMenuTree(menus);
   }
 

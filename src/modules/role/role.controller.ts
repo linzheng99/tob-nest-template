@@ -22,6 +22,13 @@ import { RoleEntity } from './entities/role.entity';
 export class RoleController {
   constructor(private readonly roleService: RoleService) {}
 
+  @Get('all')
+  @ApiOperation({ summary: '全部角色' })
+  @ApiResult({ type: [RoleEntity], isPage: false })
+  allRoles() {
+    return this.roleService.getAllRoles();
+  }
+
   @Post('create')
   @ApiOperation({ summary: '创建角色' })
   create(@Body() dto: RoleDto) {

@@ -43,6 +43,10 @@ export class RoleService {
     });
   }
 
+  async getAllRoles() {
+    return await this.roleRepository.find();
+  }
+
   async getInfo(id: number) {
     const info = await this.roleRepository.findOneBy({ id });
 
@@ -82,5 +86,20 @@ export class RoleService {
   async delete(id: number) {
     await this.roleRepository.delete(id);
     return 'success';
+  }
+
+  /**
+   * 根据用户id查找角色信息
+   */
+  async getRoleIdsByUser(id: number): Promise<number[]> {
+    const roles = await this.roleRepository.find({
+      where: {
+        users: { id },
+      },
+    });
+
+    if (roles) return roles.map((r) => r.id);
+
+    return [];
   }
 }

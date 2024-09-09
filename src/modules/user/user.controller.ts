@@ -7,6 +7,7 @@ import {
   Query,
   Put,
   Body,
+  Post,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
@@ -17,8 +18,9 @@ import { JwtAuthGuard, JwtUserData } from '../auth/guards/jwt-auth.guard';
 import { ApiSecurityAuth } from '@/common/decorators/swagger.decorator';
 import { ApiResult } from '@/common/decorators/api-result.decorator';
 import { UserEntity } from './entities/user.entity';
-import { UserQueryDto } from './dto/user.dto';
+import { UserDto, UserQueryDto } from './dto/user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { MenuService } from '../menu/menu.service';
 
 @ApiTags('User - 用户模块')
 @ApiSecurityAuth()
@@ -28,7 +30,21 @@ export class UserController {
   constructor(
     private readonly userService: UserService,
     private redisService: RedisService,
+    private menuService: MenuService,
   ) {}
+
+  @Post('create')
+  @ApiOperation({ summary: '创建用户' })
+  async create(@Body() dto: UserDto) {
+    return await this.userService.create(dto);
+  }
+
+  @Get('menus')
+  @ApiOperation({ summary: '用户路由' })
+  @ApiResult({ type: [UserEntity], isPage: false })
+  async userMenus(@AuthUser() user: JwtUserData) {
+    return await this.menuService.getMenus(user.userId);
+  }
 
   @Get('logout')
   @ApiOperation({ summary: '用户登出' })
