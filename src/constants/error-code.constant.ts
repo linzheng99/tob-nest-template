@@ -8,4 +8,5 @@ export enum ErrorEnum {
   USER_NOT_FOUND = '1004:用户不存在',
 
   INVALID_LOGIN = '1101:登录无效，请重新登录',
+  NO_PERMISSION = '1102:无权限访问',
 }

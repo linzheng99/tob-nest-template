@@ -30,14 +30,40 @@ export class MenuService {
     if (!roleIds.length) {
       return [];
     }
+    const menus = await this.getMenusOfRole(roleIds);
+
+    return buildMenuTree(menus);
+  }
+
+  /**
+   * 获取菜单中的权限
+   */
+  async getMenusOfPermission(id: number) {
+    const roleIds = await this.roleService.getRoleIdsByUser(id);
+    if (!roleIds.length) {
+      return [];
+    }
+    const menus = await this.getMenusOfRole(roleIds);
+    const permissions = menus
+      .filter((m) => m.permission)
+      .map((i) => i.permission);
+
+    return permissions;
+  }
+
+  /**
+   * 用户当前角色的菜单
+   */
+  async getMenusOfRole(roleIds: number[]) {
     let menus: MenuEntity[] = [];
+
     menus = await this.menuRepository
       .createQueryBuilder('menu')
       .innerJoinAndSelect('menu.roles', 'role')
       .andWhere('role.id IN (:...roleIds)', { roleIds })
       .getMany();
 
-    return buildMenuTree(menus);
+    return menus;
   }
 
   async create(menu: MenuDto) {

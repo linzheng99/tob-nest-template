@@ -16,6 +16,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { JwtConfig } from './config/jwt.config';
 import { MenuModule } from './modules/menu/menu.module';
 import { RoleModule } from './modules/role/role.module';
+import { PermissionGuard } from './modules/auth/guards/permission.guard';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { RoleModule } from './modules/role/role.module';
     { provide: APP_FILTER, useClass: AllExceptionFilter },
     { provide: APP_INTERCEPTOR, useClass: TransformInterceptor },
     { provide: APP_GUARD, useClass: JwtAuthGuard },
+    { provide: APP_GUARD, useClass: PermissionGuard },
     AppService,
   ],
 })

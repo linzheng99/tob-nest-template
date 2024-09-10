@@ -32,6 +32,10 @@ export class MenuEntity extends CompleteEntity {
   @Column({ nullable: true })
   redirect?: string;
 
+  @ApiProperty({ description: '菜单权限' })
+  @Column({ nullable: true })
+  permission: string;
+
   @ManyToMany(() => RoleEntity, (role) => role.menus, {
     onDelete: 'CASCADE',
   })

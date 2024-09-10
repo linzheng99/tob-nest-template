@@ -12,7 +12,6 @@ import {
 import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import { AuthGuard } from '@nestjs/passport';
-import { Request } from 'express';
 import { ExtractJwt } from 'passport-jwt';
 
 // TODO 后续需要调整
@@ -41,14 +40,14 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
   }
 
   async canActivate(context: ExecutionContext) {
-    const request: Request = context.switchToHttp().getRequest();
-    const loginAuth = this.reflector.getAllAndOverride<boolean>(
+    const request = context.switchToHttp().getRequest();
+    const isPublic = this.reflector.getAllAndOverride<boolean>(
       AUTH_PUBLIC_KEY,
       [context.getHandler(), context.getClass()],
     );
 
-    // 携带 token 用户
-    if (loginAuth) return true;
+    // 无需校验
+    if (isPublic) return true;
 
     // 是否有认证
     const authorization = request.headers.authorization;

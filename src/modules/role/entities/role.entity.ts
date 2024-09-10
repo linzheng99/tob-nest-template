@@ -3,7 +3,6 @@ import { CommonEntity } from '@/common/entity/common.entity';
 import { MenuEntity } from '@/modules/menu/entities/menu.entity';
 import { UserEntity } from '@/modules/user/entities/user.entity';
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
-import { Permission } from '@/modules/user/entities/permission.entity';
 
 @Entity({
   name: 'roles',
@@ -33,10 +32,4 @@ export class RoleEntity extends CommonEntity {
     inverseJoinColumn: { name: 'menu_id', referencedColumnName: 'id' },
   })
   menus: Relation<MenuEntity[]>;
-
-  @ManyToMany(() => Permission)
-  @JoinTable({
-    name: 'role_permissions',
-  })
-  permissions: Permission[];
 }
