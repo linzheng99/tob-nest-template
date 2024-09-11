@@ -36,6 +36,9 @@ export class MenuEntity extends CompleteEntity {
   @Column({ nullable: true })
   redirect?: string;
 
+  @Column({ name: 'order_no', type: 'int', nullable: true, default: 0 })
+  orderNo: number;
+
   @ApiProperty({ description: '菜单权限' })
   @Column({ nullable: true })
   permission: string;

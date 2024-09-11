@@ -21,7 +21,9 @@ export class MenuService {
   }
 
   async list(): Promise<MenuEntity[]> {
-    const menus = await this.menuRepository.find();
+    const menus = await this.menuRepository.find({
+      order: { orderNo: 'ASC' },
+    });
     return buildMenuTree(menus);
   }
 
@@ -61,6 +63,7 @@ export class MenuService {
       .createQueryBuilder('menu')
       .innerJoinAndSelect('menu.roles', 'role')
       .andWhere('role.id IN (:...roleIds)', { roleIds })
+      .orderBy('menu.order_no', 'ASC')
       .getMany();
 
     return menus;

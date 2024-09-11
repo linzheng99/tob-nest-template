@@ -2,9 +2,11 @@ import { OperatorDto } from '@/common/dto/operator.dto';
 import { ApiProperty, ApiPropertyOptional, PartialType } from '@nestjs/swagger';
 import {
   IsIn,
+  IsInt,
   IsNotEmpty,
   IsOptional,
   IsString,
+  Min,
   ValidateIf,
 } from 'class-validator';
 
@@ -58,6 +60,11 @@ export class MenuDto extends OperatorDto {
   @ApiPropertyOptional()
   @IsOptional()
   redirect?: string;
+
+  @ApiProperty({ description: '排序' })
+  @IsInt()
+  @Min(0)
+  orderNo: number;
 }
 
 export class MenuUpdateDto extends PartialType(MenuDto) {}
