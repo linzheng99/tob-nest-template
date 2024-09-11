@@ -1,4 +1,9 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { UserEntity } from './entities/user.entity';
 import { md5 } from '@/utils';
 import { EntityManager, In, Like, Repository } from 'typeorm';
@@ -14,6 +19,7 @@ import { UserDto, UserQueryDto } from './dto/user.dto';
 import { paginate, Pagination } from '@/helper/pagination';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { RoleEntity } from '../role/entities/role.entity';
+import { ROOT_USER_ID } from '@/constants/system.constat';
 
 @Injectable()
 export class UserService {
@@ -90,6 +96,13 @@ export class UserService {
   }
 
   async delete(id: number) {
+    // 不能删除 root 用户
+    if (id === ROOT_USER_ID)
+      throw new BadRequestException('不能删除 root 用户!');
+
+    // 删除与角色相关的用户角色
+    await this.entityManager.delete('user_roles', { role_id: id });
+
     await this.userRepository.delete(id);
     return 'success';
   }

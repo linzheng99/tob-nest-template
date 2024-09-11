@@ -5,20 +5,24 @@ import { Column, Entity, ManyToMany, Relation } from 'typeorm';
 
 @Entity({ name: 'menu' })
 export class MenuEntity extends CompleteEntity {
+  @ApiProperty({ description: '菜单类型' })
+  @Column({ type: 'tinyint', default: 0 })
+  type: number;
+
   @ApiProperty({ description: '父级菜单' })
   @Column({ name: 'parent_id', nullable: true })
   parentId: number;
 
   @ApiProperty({ description: '前端路由地址' })
-  @Column()
+  @Column({ nullable: true })
   path: string;
 
   @ApiProperty({ description: '前端路由地址名称' })
-  @Column()
+  @Column({ nullable: true })
   name: string;
 
   @ApiProperty({ description: '前端路由组件' })
-  @Column()
+  @Column({ nullable: true })
   component: string;
 
   @ApiProperty({ description: '前端路由元信息' })

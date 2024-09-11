@@ -25,12 +25,12 @@ export class PermissionGuard implements CanActivate {
     if (!user) throw new BusinessException(ErrorEnum.INVALID_LOGIN);
 
     // 查找用户权限
-    const userPermission = this.reflector.getAllAndOverride<string[]>(
+    const userPermission = this.reflector.getAllAndOverride<string[] | string>(
       PERMISSION_KEY,
       [context.getHandler(), context.getClass()],
     );
     // 没设置接口权限，默认通过
-    if (!userPermission.length || !userPermission) return true;
+    if (!userPermission?.length || !userPermission) return true;
     // TODO 超管放开权限
 
     // TODO 获取当前用户全部权限
@@ -39,7 +39,13 @@ export class PermissionGuard implements CanActivate {
     );
     let isPass = false;
 
-    isPass = userPermission.every((i) => allPermissions.includes(i));
+    if (Array.isArray(userPermission)) {
+      isPass = userPermission.every((i) => allPermissions.includes(i));
+    }
+
+    if (typeof userPermission === 'string')
+      isPass = allPermissions.includes(userPermission);
+
     if (!isPass) throw new BusinessException(ErrorEnum.NO_PERMISSION);
 
     return true;

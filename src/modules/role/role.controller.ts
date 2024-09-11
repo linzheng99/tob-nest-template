@@ -15,6 +15,14 @@ import { ApiSecurityAuth } from '@/common/decorators/swagger.decorator';
 import { RoleInfo } from './models/role.model';
 import { ApiResult } from '@/common/decorators/api-result.decorator';
 import { RoleEntity } from './entities/role.entity';
+import { definePermission } from '@/helper/permission';
+import { Perm } from '@/common/decorators/permission.decorator';
+
+export const permissions = definePermission('system:role', {
+  CREATE: 'create',
+  UPDATE: 'update',
+  DELETE: 'delete',
+} as const);
 
 @ApiTags('Role - 角色模块')
 @ApiSecurityAuth()
@@ -31,6 +39,7 @@ export class RoleController {
 
   @Post('create')
   @ApiOperation({ summary: '创建角色' })
+  @Perm(permissions.CREATE)
   create(@Body() dto: RoleDto) {
     return this.roleService.create(dto);
   }
@@ -51,12 +60,14 @@ export class RoleController {
 
   @Put(':id')
   @ApiOperation({ summary: '更新角色信息' })
+  @Perm(permissions.UPDATE)
   update(@Param('id') id: string, @Body() updateRoleDto: UpdateRoleDto) {
     return this.roleService.update(+id, updateRoleDto);
   }
 
   @Delete(':id')
   @ApiOperation({ summary: '删除角色' })
+  @Perm(permissions.DELETE)
   delete(@Param('id') id: string) {
     // TODO 关联用户无法删除
     return this.roleService.delete(+id);

@@ -1,10 +1,16 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { RoleDto, RoleQueryDto, UpdateRoleDto } from './dto/role.dto';
 import { paginate, Pagination } from '@/helper/pagination';
 import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
 import { RoleEntity } from './entities/role.entity';
 import { EntityManager, In, Like, Repository } from 'typeorm';
 import { MenuEntity } from '../menu/entities/menu.entity';
+import { ROOT_ROLE_ID } from '@/constants/system.constat';
+import { UserEntity } from '../user/entities/user.entity';
 
 @Injectable()
 export class RoleService {
@@ -13,6 +19,8 @@ export class RoleService {
     private roleRepository: Repository<RoleEntity>,
     @InjectRepository(MenuEntity)
     private menuRepository: Repository<MenuEntity>,
+    @InjectRepository(UserEntity)
+    private userRepository: Repository<UserEntity>,
     @InjectEntityManager()
     private entityManager: EntityManager,
   ) {}
@@ -84,6 +92,13 @@ export class RoleService {
   }
 
   async delete(id: number) {
+    // 不能删除 root 角色
+    if (id === ROOT_ROLE_ID)
+      throw new BadRequestException('不能删除 root 角色!');
+
+    // 删除与角色相关的用户角色
+    await this.entityManager.delete('user_roles', { role_id: id });
+
     await this.roleRepository.delete(id);
     return 'success';
   }

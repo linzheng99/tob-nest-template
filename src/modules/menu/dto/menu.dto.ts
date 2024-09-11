@@ -1,26 +1,39 @@
 import { OperatorDto } from '@/common/dto/operator.dto';
 import { ApiProperty, ApiPropertyOptional, PartialType } from '@nestjs/swagger';
-import { IsNotEmpty, IsOptional } from 'class-validator';
+import {
+  IsIn,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  ValidateIf,
+} from 'class-validator';
 
 export class MenuDto extends OperatorDto {
+  @ApiProperty({ description: '菜单类型' })
+  @IsIn([0, 1, 2])
+  type: number;
+
   @ApiProperty({ description: '父级菜单' })
   @ApiPropertyOptional()
   @IsOptional()
   parentId?: number;
 
   @ApiProperty({ description: '前端路由地址' })
+  @ValidateIf((o) => o.type !== 2)
   @IsNotEmpty({
     message: '前端路由地址不能为空',
   })
   path: string;
 
   @ApiProperty({ description: '前端路由地址名称' })
+  @ValidateIf((o) => o.type !== 2)
   @IsNotEmpty({
-    message: '前端路由地址名称',
+    message: '前端路由地址名称不能为空',
   })
   name: string;
 
   @ApiProperty({ description: '前端路由组件' })
+  @ValidateIf((o) => o.type !== 2)
   @IsNotEmpty({
     message: '前端路由组件不能为空',
   })
@@ -33,6 +46,13 @@ export class MenuDto extends OperatorDto {
     title: string;
     icon: string;
   };
+
+  @ApiProperty({ description: '对应权限' })
+  @ApiPropertyOptional()
+  @IsString()
+  @IsOptional()
+  @ValidateIf((o: MenuDto) => o.type === 2)
+  permission: string;
 
   @ApiProperty({ description: '前端路由重定向' })
   @ApiPropertyOptional()

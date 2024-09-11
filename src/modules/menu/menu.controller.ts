@@ -15,6 +15,7 @@ import { CreatorPipe } from '@/common/pipes/creator.pipe';
 import { UpdaterPipe } from '@/common/pipes/updater.pipe';
 import { ApiResult } from '@/common/decorators/api-result.decorator';
 import { MenuItemInfo } from './models/menu.model';
+import { getDefinePermissions } from '@/helper/permission';
 
 @ApiTags('Menu - 菜单管理')
 @ApiSecurityAuth()
@@ -52,5 +53,11 @@ export class MenuController {
   @ApiOperation({ summary: '删除菜单' })
   remove(@Param('id') id: string) {
     return this.menuService.remove(+id);
+  }
+
+  @Get('permissions')
+  @ApiOperation({ summary: '获取后端定义的所有权限集' })
+  async getPermissions(): Promise<string[]> {
+    return getDefinePermissions();
   }
 }
