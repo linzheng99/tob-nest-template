@@ -23,6 +23,12 @@ import { getDefinePermissions } from '@/helper/permission';
 export class MenuController {
   constructor(private readonly menuService: MenuService) {}
 
+  @Get('permissions')
+  @ApiOperation({ summary: '获取后端定义的所有权限集' })
+  async getPermissions(): Promise<string[]> {
+    return getDefinePermissions();
+  }
+
   @Post('create')
   @ApiOperation({ summary: '创建菜单' })
   create(@Body(CreatorPipe) dto: MenuDto) {
@@ -53,11 +59,5 @@ export class MenuController {
   @ApiOperation({ summary: '删除菜单' })
   remove(@Param('id') id: string) {
     return this.menuService.remove(+id);
-  }
-
-  @Get('permissions')
-  @ApiOperation({ summary: '获取后端定义的所有权限集' })
-  async getPermissions(): Promise<string[]> {
-    return getDefinePermissions();
   }
 }
