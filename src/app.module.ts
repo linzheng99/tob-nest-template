@@ -17,6 +17,7 @@ import { JwtConfig } from './config/jwt.config';
 import { MenuModule } from './modules/menu/menu.module';
 import { RoleModule } from './modules/role/role.module';
 import { PermissionGuard } from './modules/auth/guards/permission.guard';
+import { LoggerModule } from './shared/logger/logger.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { PermissionGuard } from './modules/auth/guards/permission.guard';
     AuthModule,
     MenuModule,
     RoleModule,
+    LoggerModule,
   ],
   controllers: [AppController],
   providers: [
