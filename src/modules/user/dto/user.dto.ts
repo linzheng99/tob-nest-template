@@ -5,8 +5,14 @@ import {
   IntersectionType,
   PartialType,
 } from '@nestjs/swagger';
-import { RegisterUserDto } from './register-user.dto';
-import { IsEmail, IsNotEmpty, IsString, MinLength } from 'class-validator';
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  MinLength,
+  ValidateIf,
+} from 'class-validator';
 
 export class UserDto {
   @ApiProperty({ description: '用户名' })
@@ -30,16 +36,16 @@ export class UserDto {
   password: string;
 
   @ApiProperty({ description: '邮箱' })
-  @IsNotEmpty({
-    message: '邮箱不能为空',
-  })
+  @ApiPropertyOptional()
+  @IsOptional()
+  @ValidateIf((o) => o.email)
   @IsEmail(
     {},
     {
       message: '不是合法的邮箱格式',
     },
   )
-  email: string;
+  email?: string;
 
   @ApiProperty({ description: '角色' })
   @IsNotEmpty({
@@ -50,5 +56,5 @@ export class UserDto {
 
 export class UserQueryDto extends IntersectionType(
   PagerDto,
-  PartialType(RegisterUserDto),
+  PartialType(UserDto),
 ) {}

@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { LoginUserDto } from '../user/dto/login-user.dto';
-import { md5 } from '@/utils';
 import { UserEntity } from '../user/entities/user.entity';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
@@ -32,7 +31,7 @@ export class AuthService {
     );
 
     if (!user) throw new BusinessException(ErrorEnum.USER_NOT_FOUND);
-    if (user.password !== md5(loginUserDto.password))
+    if (user.password !== loginUserDto.password)
       throw new BusinessException(ErrorEnum.INVALID_USERNAME_PASSWORD);
 
     const { accessToken, refreshToken } = this.generateToken(user);

@@ -30,8 +30,7 @@ export class UserEntity extends CommonEntity {
 
   @ApiProperty({ description: '邮箱' })
   @Column({
-    comment: '邮箱',
-    length: 50,
+    nullable: true,
   })
   email: string;
 

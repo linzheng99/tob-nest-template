@@ -5,7 +5,6 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { UserEntity } from './entities/user.entity';
-import { md5 } from '@/utils';
 import { EntityManager, In, Like, Repository } from 'typeorm';
 import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
 import { RegisterUserDto } from './dto/register-user.dto';
@@ -47,7 +46,6 @@ export class UserService {
     await this.entityManager.transaction(async (manager) => {
       const u = manager.create(UserEntity, {
         username,
-        password: md5(data.password),
         ...data,
       });
 
@@ -70,7 +68,7 @@ export class UserService {
     await this.entityManager.transaction(async (manager) => {
       const u = manager.create(UserEntity, {
         username,
-        password: md5(password),
+        password,
         ...data,
         roles: await this.roleRepository.findBy({ id: In(roleIds) }),
       });

@@ -1,5 +1,12 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsEmail, IsNotEmpty, IsString, MinLength } from 'class-validator';
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  MinLength,
+  ValidateIf,
+} from 'class-validator';
 
 export class RegisterUserDto {
   @ApiProperty({ description: '用户名' })
@@ -23,14 +30,14 @@ export class RegisterUserDto {
   password: string;
 
   @ApiProperty({ description: '邮箱' })
-  @IsNotEmpty({
-    message: '邮箱不能为空',
-  })
+  @ApiPropertyOptional()
+  @IsOptional()
+  @ValidateIf((o) => o.email)
   @IsEmail(
     {},
     {
       message: '不是合法的邮箱格式',
     },
   )
-  email: string;
+  email?: string;
 }
