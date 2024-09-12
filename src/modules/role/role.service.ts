@@ -10,7 +10,6 @@ import { RoleEntity } from './entities/role.entity';
 import { EntityManager, In, Like, Repository } from 'typeorm';
 import { MenuEntity } from '../menu/entities/menu.entity';
 import { ROOT_ROLE_ID } from '@/constants/system.constat';
-import { UserEntity } from '../user/entities/user.entity';
 
 @Injectable()
 export class RoleService {
@@ -19,8 +18,6 @@ export class RoleService {
     private roleRepository: Repository<RoleEntity>,
     @InjectRepository(MenuEntity)
     private menuRepository: Repository<MenuEntity>,
-    @InjectRepository(UserEntity)
-    private userRepository: Repository<UserEntity>,
     @InjectEntityManager()
     private entityManager: EntityManager,
   ) {}
@@ -75,15 +72,10 @@ export class RoleService {
    * 如果传入的menuIds为空，则清空sys_role_menus表中存有的关联数据，参考新增
    */
   async update(id: number, { menuIds, ...data }: UpdateRoleDto): Promise<void> {
-    const role = await this.roleRepository.findOne({ where: { id } });
-
-    if (!role) {
-      throw new NotFoundException('未找到指定 ID 角色');
-    }
-
     await this.roleRepository.update(id, data);
 
     await this.entityManager.transaction(async (manager) => {
+      const role = await this.roleRepository.findOne({ where: { id } });
       role.menus = menuIds?.length
         ? await this.menuRepository.findBy({ id: In(menuIds) })
         : [];
