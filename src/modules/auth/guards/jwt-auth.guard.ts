@@ -2,6 +2,7 @@ import { BusinessException } from '@/common/exceptions/business.exception';
 import { AUTH_PUBLIC_KEY } from '@/constants';
 import { ErrorEnum } from '@/constants/error-code.constant';
 import { RedisService } from '@/shared/redis/redis.service';
+import { checkIsDemoMode } from '@/utils';
 import { genTokenBlacklistKey } from '@/utils/redis';
 import {
   ExecutionContext,
@@ -45,6 +46,10 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
       AUTH_PUBLIC_KEY,
       [context.getHandler(), context.getClass()],
     );
+
+    // 演示环境
+    if (request.method !== 'GET' && !request.url.includes('/auth/login'))
+      checkIsDemoMode();
 
     // 无需校验
     if (isPublic) return true;
