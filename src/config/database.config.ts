@@ -1,7 +1,7 @@
 import { config } from 'dotenv';
-import { DataSourceOptions } from 'typeorm';
+import { DataSource, DataSourceOptions } from 'typeorm';
 import { ConfigType, registerAs } from '@nestjs/config';
-import { getEnvBoolean, getEnvNumber, getEnvString } from '@/utils';
+import { getEnvBoolean, getEnvNumber, getEnvString } from '../utils';
 
 config({ path: `.env.${process.env.NODE_ENV}` });
 
@@ -15,6 +15,11 @@ const dataSourceOptions: DataSourceOptions = {
   synchronize: getEnvBoolean('DB_SYNCHRONIZE'),
   timezone: '+08:00', //服务器上配置的时区
   connectorPackage: 'mysql2',
+  extra: {
+    authPlugins: 'sha256_password',
+  },
+  entities: ['dist/modules/**/*.entity{.ts,.js}'],
+  migrations: ['dist/migrations/*{.ts,.js}'],
 };
 
 export const dbRegToken = 'database';
@@ -25,3 +30,7 @@ export const DatabaseConfig = registerAs(
 );
 
 export type IDatabaseConfig = ConfigType<typeof DatabaseConfig>;
+
+const dataSource = new DataSource(dataSourceOptions);
+
+export default dataSource;

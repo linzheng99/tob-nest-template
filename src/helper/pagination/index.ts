@@ -84,7 +84,7 @@ async function paginateRepository<T>(
       take: limit, // 获取指定数量的项目
       ...searchOptions, // 其他搜索选项
     }),
-    undefined,
+    repository.count(searchOptions),
   ];
 
   const [items, total] = await Promise.all(promises);

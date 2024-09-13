@@ -11,10 +11,8 @@ import { TypeORMLogger } from './typeorm-logger';
     TypeOrmModule.forRootAsync({
       useFactory: async (configService: ConfigService) => ({
         ...configService.get('database'),
-        entities: [UserEntity, RoleEntity, MenuEntity], // 数据表实体
-        extra: {
-          authPlugins: 'sha256_password',
-        },
+        // entities: [UserEntity, RoleEntity, MenuEntity], // 数据表实体
+        autoLoadEntities: true,
         logging: ['error'],
         logger: new TypeORMLogger(['error']),
       }),

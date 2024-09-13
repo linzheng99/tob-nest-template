@@ -29,3 +29,14 @@ export class ResOp<T = any> {
     return new ResOp(code, {}, message);
   }
 }
+
+export class TreeResult<T> {
+  @ApiProperty()
+  id: number;
+
+  @ApiProperty()
+  parentId: number;
+
+  @ApiProperty()
+  children?: TreeResult<T>[];
+}
