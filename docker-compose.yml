@@ -1,0 +1,59 @@
+version: '3.8'
+services:
+  mysql:
+    image: mysql:latest
+    container_name: tob-nest-template-mysql
+    restart: always
+    env_file:
+      - .env
+      - .env.production
+    volumes:
+      - ./__data/mysql/:/var/lib/mysql/ # /User/linzheng/mysql/ 路径可以替换成自己的路径
+    environment:
+      - MYSQL_HOST=${DB_HOST}
+      - MYSQL_PORT=${DB_PORT}
+      - MYSQL_DATABASE=${DB_DATABASE}
+      - MYSQL_USERNAME=${DB_USERNAME}
+      - MYSQL_PASSWORD=${DB_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
+    ports:
+      - '3307:3306'
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_general_ci # 设置utf8字符集
+    networks:
+      - tob_nest_template_network
+
+  redis:
+    image: redis
+    container_name: tob-nest-template-redis
+    restart: always
+    env_file:
+      - .env
+      - .env.production
+    ports:
+      - 6379:6379
+    volumes:
+      - ./__data/redis/:/data
+    networks:
+      - tob_nest_template_network
+
+  nest-serve:
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+    env_file:
+      - .env
+      - .env.production
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+    ports:
+      - '${APP_PORT}:${APP_PORT}'
+    restart: always
+    depends_on:
+      - mysql
+      - redis
+    networks:
+      - tob_nest_template_network
+
+networks:
+  tob_nest_template_network:
+    driver: bridge

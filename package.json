@@ -6,7 +6,7 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "build": "nest build",
+    "build": "nest build && cp .env dist/ && cp .env.production dist/",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "dev": "npm run start",
     "dev:debug": "npm run start:debug",
@@ -18,7 +18,9 @@
     "migration:create": "npm run typeorm -- migration:create",
     "migration:generate": "npm run typeorm -- migration:generate -d ./dist/config/database.config.js",
     "migration:run": "npm run typeorm -- migration:run -d ./dist/config/database.config.js",
-    "migration:revert": "npm run typeorm -- migration:revert -d ./dist/config/database.config.js"
+    "migration:revert": "npm run typeorm -- migration:revert -d ./dist/config/database.config.js",
+    "docker:up": "docker compose --env-file .env --env-file .env.production up",
+    "docker:down": "docker compose --env-file .env --env-file .env.production down"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",

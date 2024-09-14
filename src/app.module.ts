@@ -18,6 +18,7 @@ import { MenuModule } from './modules/menu/menu.module';
 import { RoleModule } from './modules/role/role.module';
 import { PermissionGuard } from './modules/auth/guards/permission.guard';
 import { LoggerModule } from './shared/logger/logger.module';
+import * as path from 'path';
 
 @Module({
   imports: [
@@ -25,6 +26,8 @@ import { LoggerModule } from './shared/logger/logger.module';
       isGlobal: true,
       expandVariables: true,
       // 指定多个 env 文件时，第一个优先级最高
+      // envFilePath: path.join(__dirname, '.env'),
+      // envFilePath: [path.join(__dirname, '.env')],
       envFilePath: [`.env.${process.env.NODE_ENV}`, '.env'],
       load: [AppConfig, SwaggerConfig, DatabaseConfig, RedisConfig, JwtConfig],
     }),

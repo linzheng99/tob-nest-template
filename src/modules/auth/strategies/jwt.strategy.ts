@@ -12,7 +12,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      secretOrKey: jwtConfig.jwtSecret,
+      secretOrKey: 'admin!@#123', // 确保这里使用了正确的密钥
     });
   }
 
