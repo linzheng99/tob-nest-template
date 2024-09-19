@@ -70,9 +70,9 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
       result = await super.canActivate(context);
     } catch (err) {
       // 判断 token 是否有效且存在, 如果不存在则认证失败
-      const isValid = !!token
-        ? undefined
-        : this.jwtService.verify<JwtUserData>(token);
+      const isValid = token
+        ? this.jwtService.verify<JwtUserData>(token)
+        : false;
 
       if (err instanceof UnauthorizedException)
         throw new BusinessException(ErrorEnum.INVALID_LOGIN);
