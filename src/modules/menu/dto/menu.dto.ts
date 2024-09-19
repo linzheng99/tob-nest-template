@@ -21,11 +21,13 @@ export class MenuDto extends OperatorDto {
   parentId?: number;
 
   @ApiProperty({ description: '前端路由地址' })
-  @ValidateIf((o) => o.type !== 2)
+  @ApiPropertyOptional()
+  @IsOptional()
+  @ValidateIf((o) => o.type === 1)
   @IsNotEmpty({
     message: '前端路由地址不能为空',
   })
-  path: string;
+  path?: string;
 
   @ApiProperty({ description: '前端路由地址名称' })
   @ValidateIf((o) => o.type !== 2)
@@ -60,6 +62,11 @@ export class MenuDto extends OperatorDto {
   @ApiPropertyOptional()
   @IsOptional()
   redirect?: string;
+
+  @ApiProperty({ description: '外链地址' })
+  @ApiPropertyOptional()
+  @IsOptional()
+  external?: string;
 
   @ApiProperty({ description: '排序' })
   @IsInt()

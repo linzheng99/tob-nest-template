@@ -32,6 +32,10 @@ export class MenuEntity extends CompleteEntity {
     icon: string;
   };
 
+  @ApiProperty({ description: '外链地址' })
+  @Column({ nullable: true })
+  external?: string;
+
   @ApiProperty({ description: '前端路由重定向' })
   @Column({ nullable: true })
   redirect?: string;
