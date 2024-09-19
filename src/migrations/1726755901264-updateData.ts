@@ -4,6 +4,7 @@ export class UpdateData1726755901264 implements MigrationInterface {
   name = 'UpdateData1726755901264';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(`ALTER TABLE \`menu\` DROP COLUMN \`external\``);
     await queryRunner.query(
       `DELETE FROM \`menu\` WHERE \`id\` IN (36, 37, 38);`,
     );
