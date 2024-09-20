@@ -19,7 +19,7 @@
     "migration:generate": "npm run typeorm -- migration:generate -d ./dist/config/database.config.js",
     "migration:run": "npm run typeorm -- migration:run -d ./dist/config/database.config.js",
     "migration:revert": "npm run typeorm -- migration:revert -d ./dist/config/database.config.js",
-    "docker:up": "docker compose --env-file .env --env-file .env.production up",
+    "docker:up": "docker compose --env-file .env --env-file .env.production up --no-cache",
     "docker:down": "docker compose --env-file .env --env-file .env.production down"
   },
   "dependencies": {
