@@ -23,6 +23,7 @@ pnpm dev
 pnpm build
 ```
 
+## 快速启动
 * 启动镜像
 ```ssh
 pnpm docker:up
@@ -32,3 +33,21 @@ pnpm docker:up
 ```ssh
 pnpm docker:down
 ```
+
+## Task
+* 拦截器
+	- [x] 成功数据的转换拦截器
+	- [x] 异常请求的拦截器
+	- [x] 业务逻辑的拦截器
+* shared
+	- [x] mysql
+	- [x] redis
+* 文档
+	- [x] swagger
+* 模块
+	- [x] User
+	- [x] Menu
+	- [x] Auth
+	- [x] Role
+* 日志
+	- [x] Logger
